@@ -92,6 +92,21 @@ class RateLimiter(System):
     def output(self):
         return self._value
     
+class ChainSystem(System):
+    def __init__(self, systems):
+        self._systems = systems
+        
+        self._output = 0
+    
+    def update(self, dt, u):
+        for system in self._systems:
+            system.update(dt, u)
+            u=system.output()
+            
+        self._output=u
+
+    def output(self):
+        return self._output
         
         
 
@@ -100,7 +115,8 @@ if __name__ == '__main__':
     #system=P(1)
     #system=PT1(1, 1)
     #system=Motor(1, 1)
-    system=RateLimiter(0.5, 0.8)
+    #system=RateLimiter(0.5, 0.8)
+    system=ChainSystem([PT1(0.5,1), PT1(0.5,1)])
 
     time = 5
     dt = 1/50
