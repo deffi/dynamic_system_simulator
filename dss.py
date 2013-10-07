@@ -125,7 +125,7 @@ class Motor(System):
     def update(self, dt, u):
         power = u
 
-        if power < self._static_friction:
+        if abs(power) < self._static_friction:
             power = 0
             
         acceleration = power * self._acceleration - self._friction * self._speed
@@ -212,12 +212,13 @@ if __name__ == '__main__':
     #system=ControlledSystem(PT1(1, 1), PController(1))
     #system=ControlledSystem(PT2(1, 1), PController(1))
 
-    wheel_system=ChainSystem([RateLimiter(1, 1), Motor(1, 1, 0.05), Integrator()])
-    system=ControlledSystem(wheel_system, PController(1))
-    #system=ControlledSystem(wheel_system, PIDController(1, 0, 0.5))
+    #wheel_system=ChainSystem([RateLimiter(1, 1), Motor(1, 1, 0.1), Integrator()])
+    wheel_system=ChainSystem([Motor(1, 1, 0.1), Integrator()])
+    #system=ControlledSystem(wheel_system, PController(1))
+    system=ControlledSystem(wheel_system, PIDController(1, 0.1, 0.5))
 
 
-    time = 10
+    time = 20
     dt = 1/50
 
     def u(t):
