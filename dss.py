@@ -1,5 +1,20 @@
+import math
 import numpy as np
 from matplotlib import pyplot as plt
+
+
+
+def limit(value, minimum=None, maximum=None, absolute=False):
+    if absolute:
+        return math.copysign(limit(abs(value), minimum, maximum, False), value)
+    else:
+        if minimum is not None:
+            value=max(value, minimum)
+
+        if maximum is not None:
+            value=min(value, maximum)
+            
+        return value
 
 class System:
     pass
@@ -40,9 +55,52 @@ class PT1(System):
         # Return state
         return self._y
 
+class Motor(System):
+    def __init__(self, friction, acceleration):
+        self._friction = friction
+        self._acceleration = acceleration
+        
+        self._speed=0
+        
+    def update(self, dt, u):
+        power = u
+        
+        acceleration = power * self._acceleration - self._friction * self._speed
+        self._speed += acceleration * dt
+    
+    def output(self):
+        return self._speed
+
+class RateLimiter(System):
+    def __init__(self, max_rate, max_value):
+        self._max_rate =max_rate
+        self._max_value=max_value
+        
+        self._value=0
+        
+    def update(self, dt, u):
+        target=u
+        
+        limit_delta = dt * self._max_rate
+
+        requested_value = limit(target, maximum=self._max_value, absolute=True)
+        requested_delta = requested_value - self._value
+        limited_delta = limit(requested_delta, maximum = limit_delta, absolute=True)
+
+        self._value += limited_delta
+    
+    def output(self):
+        return self._value
+    
+        
+        
+
+
 if __name__ == '__main__':
-    system=PT1(1, 1)
     #system=P(1)
+    #system=PT1(1, 1)
+    #system=Motor(1, 1)
+    system=RateLimiter(0.5, 0.8)
 
     time = 5
     dt = 1/50
