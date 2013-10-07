@@ -1,3 +1,7 @@
+# TODO:
+#   * We should be able to plot internal system values, e. g. the PWM value in
+#     the wheel system, also the p/i/d terms of a PID controller. 
+
 import math
 import numpy as np
 from matplotlib import pyplot as plt
@@ -214,9 +218,8 @@ if __name__ == '__main__':
 
     #wheel_system=ChainSystem([RateLimiter(1, 1), Motor(1, 1, 0.1), Integrator()])
     wheel_system=ChainSystem([Motor(1, 1, 0.1), Integrator()])
-    #system=ControlledSystem(wheel_system, PController(1))
-    system=ControlledSystem(wheel_system, PIDController(1, 0.1, 0.5))
-
+    system=ControlledSystem(wheel_system, PController(1))
+    #system=ControlledSystem(wheel_system, PIDController(1, 0.1, 0.5))
 
     time = 20
     dt = 1/50
@@ -226,6 +229,8 @@ if __name__ == '__main__':
             return 1
         else:
             return 0
+
+    u=lambda t: 1
 
     T=np.arange(0, time+dt, dt)
     
