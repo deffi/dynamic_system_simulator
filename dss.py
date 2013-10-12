@@ -6,19 +6,7 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 
-
-
-def limit(value, minimum=None, maximum=None, absolute=False):
-    if absolute:
-        return math.copysign(limit(abs(value), minimum, maximum, False), value)
-    else:
-        if minimum is not None:
-            value=max(value, minimum)
-
-        if maximum is not None:
-            value=min(value, maximum)
-            
-        return value
+from util import limit
 
 class System:
     pass
@@ -245,3 +233,50 @@ if __name__ == '__main__':
     plt.plot(T, Y, '-')
     plt.grid()
     plt.show()
+
+
+'''
+
+# Create the subsystems (remapping the port names) 
+motor = Motor(max_torque, friction)
+wheel = Wheel(diameter, inertia)
+vehicle = Integrator(input="speed", output="position")
+controller = PidController(p, i, d)
+target = Step(t=2)
+
+# Connecting inputs directly to outputs...
+controller.target.connect(target)
+controller.measurement.connect(vehicle.output)
+motor.pwm.connect(controller.output)
+wheel.torque.connect(motor.torque)
+vehicle.input.connect(wheel.speed)
+
+# ...or connecting an input and an output (or reversed)
+connect(target, controller.target)
+connect(controller.output, motor.pwm)
+connect(motor.torque, wheel.torque)
+connect(wheel.speed, vehicle.input)
+connect(vehicle.output, controller.measurement)
+
+# Or maybe specify the connections on creation (with a different mechanism for
+# when the source has not yet been created (feedback))
+target = Step(t=2)
+controller = PidController(target=target, measurement="position")
+motor = Motor(max_torque, friction, pwm=controller.output)
+wheel = Wheel(diameter, inertia, torque=motor.torque)
+vehicle = Integrator(input=wheel.speed, output="position")
+
+# Or ROS topic style
+target = Step(t=2, output="target")
+controller = PidController (target="target", measurement="speed", output="pwm")
+motor = Motor(pwm="pwm", torque="torque")
+wheel = Wheel(torque="torque", speed="speed")
+vehicle = Integrator(input="speed", output="position")
+
+
+# Also, we should be able to have a vehicle with four wheels
+# And we should have a way to visualize it, e. g. integrator input=speed
+# output=position
+# And we need a way to specify the parameters
+
+'''
