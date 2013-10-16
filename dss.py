@@ -1,58 +1,61 @@
 # import math
 # import numpy as np
-# from matplotlib import pyplot as plt
-
-from system import *
-
-if __name__ == '__main__':
-#     #wheel_system=ChainSystem([RateLimiter(1, 1), Motor(1, 1, 0.1), Integrator()])
-#     wheel_system=ChainSystem([Motor(1, 1, 0.1), Integrator()])
-#     system=ControlledSystem(wheel_system, PController(1))
-#     #system=ControlledSystem(wheel_system, PIDController(1, 0.1, 0.5))
-# 
-#     time = 20
-#     dt = 1/50
-# 
-#     def u(t):
-#         if t>=1:
-#             return 1
-#         else:
-#             return 0
-# 
-#     u=lambda t: 1
-# 
-#     T=np.arange(0, time+dt, dt)
-#     
-#     Y=np.zeros(np.size(T))
-#      
-#     Y[0]=system.output()
-#     previous_t=T[0]
-#     for i, t in enumerate(T[1:]):
-#         system.update(dt, u(t))
-#         Y[i+1]=system.output()
-# 
-#     plt.plot(T, Y, '-')
-#     plt.grid()
-#     plt.show()
-
-    # Simulate a spring pendulum
-    mass = 1
-    stiffness = 1
-    
-    spring = Gain(input="position", output="force", gain=-stiffness)
-    mass1 = Gain(input="force", output="acceleration", gain=1/mass)
-    mass2 = Integrator(input="acceleration", output="velocity")
-    mass3 = Integrator(input="velocity", output="position")
-    
-
+from matplotlib import pyplot as plt
 
 '''
 
 # Open questions:
 #   - parameters
-#   - initial values
+#   - setting initial values from outside
 #   - subsystems (e. g. spring, vehicle with 4 wheels)
 #   - visualization (also internal values: pwm values in a motor controller
 #     system, integral error in a PID controller)
 
 '''
+
+from system import System
+
+class Spring(System):
+    def setup(self):
+        self.input("displacement")
+        self.output("force")
+        self.parameter("stiffness")
+    
+    def initialize(self):
+        pass
+        
+    def update(self, t, dt):
+        self.force = - self.position * self.stiffness
+
+class Mass(System):
+    def setup(self):
+        self.input("force")
+        self.output("position")
+        self.parameter("mass")
+        self.internal("acceleration")
+        self.internal("velocity")
+        
+    def initialize(self):
+        self.velocity = 0
+        
+    def step(self, dt, input_):
+        self.acceleration = self.force / self.mass
+        self.velocity += self.acceleration * dt
+        self.position += self.velocity * dt
+
+class Pendulum(System):
+    def setup(self):
+        self.parameter("stiffness")
+        self.parameter("mass")
+        
+        spring = Spring(self, "spring", displacement="position", force="force", stiffness = self.stiffness)
+        mass   = Mass  (self, "mass"  , force="force", position="position", mass = self.mass)
+
+pendulum = Pendulum()
+pendulum.mass = 1
+pendulum.stiffness = 1
+pendulum.position = 1
+pendulum.run(10, 0.01)
+
+plt.plot(pendulum.time(), pendulum.position.log())        
+plt.show()
