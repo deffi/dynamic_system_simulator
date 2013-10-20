@@ -12,4 +12,3 @@ class System:
         #for value, topic in zip(output_values, self._output_topics):
         #    topic.set_value(value)
 
-        
