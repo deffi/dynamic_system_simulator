@@ -1,13 +1,10 @@
 class System:
-    def __init__(self, transport, inputs, outputs):
+    def __init__(self):
         pass
         #self._input_topics  = [transport.topic(name) for name in inputs ]
         #self._output_topics = [transport.topic(name) for name in outputs]
         #self.initialize()
 
-    def input(self):
-        self._inputs
-        
     def update(self, dt):
         pass
         #input_values = [topic.value() for topic in self._input_topics]

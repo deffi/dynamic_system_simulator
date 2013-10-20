@@ -1,5 +1,5 @@
-# import math
-# import numpy as np
+import math
+import numpy as np
 from matplotlib import pyplot as plt
 
 '''
@@ -16,46 +16,79 @@ from matplotlib import pyplot as plt
 from system import System
 
 class Spring(System):
+    def __init__(self):
+        self.displacement = 0
+        
     def setup(self):
-        self.input("displacement")
-        self.output("force")
-        self.parameter("stiffness")
+        pass
+        #self.input("displacement", 0)
+        #self.output("force")
+        #self.parameter("stiffness")
     
     def initialize(self):
         pass
         
     def update(self, t, dt):
-        self.force = - self.position * self.stiffness
+        self.force = - self.displacement * self.stiffness
 
 class Mass(System):
     def setup(self):
-        self.input("force")
-        self.output("position")
-        self.parameter("mass")
-        self.internal("acceleration")
-        self.internal("velocity")
-        
-    def initialize(self):
+        pass
+        #self.input("force")
+        #self.output("position")
+        #self.parameter("mass")
+        #self.internal("acceleration")
+        #self.internal("velocity")
+
+    def __init__(self):        
+        self.position = 0
         self.velocity = 0
         
-    def step(self, dt, input_):
+    def update(self, t, dt):
         self.acceleration = self.force / self.mass
-        self.velocity += self.acceleration * dt
-        self.position += self.velocity * dt
+        self.velocity += self.acceleration * (dt or 0)
+        self.position += self.velocity * (dt or 0)
 
 class Pendulum(System):
-    def setup(self):
-        self.parameter("stiffness")
-        self.parameter("mass")
+    def __init__(self):
+        self.spring = Spring()
+        self.mass   = Mass()
         
-        spring = Spring(self, "spring", displacement="position", force="force", stiffness = self.stiffness)
-        mass   = Mass  (self, "mass"  , force="force", position="position", mass = self.mass)
+    def setup(self):
+        pass
+        #self.parameter("stiffness")
+        #self.parameter("mass")
+        
+    def update(self, t, dt):
+        self.spring.displacement = self.mass.position
+        self.spring.update(t, dt)
+        
+        self.mass.force = self.spring.force
+        self.mass.update(t, dt)
+        
+
+# T = 2 π sqrt(m/D)
 
 pendulum = Pendulum()
-pendulum.mass = 1
-pendulum.stiffness = 1
-pendulum.position = 1
-pendulum.run(10, 0.01)
+pendulum.spring.stiffness = 1.5
+pendulum.mass.mass = 0.5
 
-plt.plot(pendulum.time(), pendulum.position.log())        
+# It must be irrelevant which one we assign to, because it's the same variable
+pendulum.mass.position = 1
+#pendulum.spring.displacement = 1
+
+t = np.arange(0, 10, 0.1)
+x = np.zeros(np.size(t))
+
+for i in range(len(t)):
+    x[i] = pendulum.mass.position
+
+    dt = t[i]-t[i-1] if i>0 else None
+    pendulum.update(t, dt)
+
+
+#pendulum.run(10, 0.01)
+
+#plt.plot(pendulum.time(), pendulum.position.log())
+plt.plot(t, x)        
 plt.show()
