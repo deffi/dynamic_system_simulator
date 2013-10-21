@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 
 # Open questions:
 #   - parameters
-#   - setting initial values from outside
-#   - subsystems (e. g. spring, vehicle with 4 wheels)
+#   - setting initial values from outside (like parameters, or as parameters)
+#   - subsystems (e. g. vehicle with 4 wheels)
 #   - visualization (also internal values: pwm values in a motor controller
 #     system, integral error in a PID controller)
 
