@@ -29,7 +29,7 @@ for i in range(len(t)):
     x[i] = pendulum.mass.position
 
     dt = t[i]-t[i-1] if i>0 else None
-    pendulum.update(t, dt)
+    pendulum.update(t[i], dt)
 
 plt.plot(t, x)        
 plt.show()

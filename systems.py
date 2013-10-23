@@ -30,6 +30,9 @@ class Mass(System):
         self.velocity = 0
         
     def update(self, t, dt):
+        #if self.mass <= 0.2 and t > 2:
+        #    raise ValueError("Dummy error")
+        
         self.acceleration = self.force / self.mass
         self.velocity += self.acceleration * (dt or 0)
         self.position += self.velocity * (dt or 0)

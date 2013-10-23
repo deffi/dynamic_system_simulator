@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 import sys
+import traceback
+
 from PySide import QtGui, QtCore
 
 import numpy as np
@@ -55,10 +57,13 @@ class MainWindow(QtGui.QMainWindow):
         self.menuBar().addMenu(self.file_menu)
 
         central_widget = QtGui.QWidget(self)
-        self._plotWidget = MplWidget(central_widget, width=5, height=4, dpi=100)
         parameters_pane = QtGui.QWidget(central_widget)
+        self._plotWidget = MplWidget(central_widget, width=5, height=4, dpi=100)
 
-        mass_label = QtGui.QLabel("Mass:", parameters_pane)
+        self._exceptionWidget = QtGui.QTextEdit(central_widget)
+        self._exceptionWidget.setReadOnly(True)
+
+        mass_label = QtGui.QLabel("&Mass:", parameters_pane)
         self._mass_input = QtGui.QDoubleSpinBox(parameters_pane)
         self._mass_input.setSuffix(" kg")
         self._mass_input.setRange(sys.float_info.min, sys.float_info.max)
@@ -66,8 +71,9 @@ class MainWindow(QtGui.QMainWindow):
         self._mass_input.setSingleStep(0.1)
         self._mass_input.setValue(0.5)
         self._mass_input.valueChanged.connect(self.simulate)
+        mass_label.setBuddy(self._mass_input)
         
-        stiffness_label = QtGui.QLabel("Stiffness:", parameters_pane)
+        stiffness_label = QtGui.QLabel("&Stiffness:", parameters_pane)
         self._stiffness_input = QtGui.QDoubleSpinBox(parameters_pane)
         self._stiffness_input.setSuffix(" N/m")
         self._stiffness_input.setRange(sys.float_info.min, sys.float_info.max)
@@ -75,13 +81,14 @@ class MainWindow(QtGui.QMainWindow):
         self._stiffness_input.setSingleStep(0.1)
         self._stiffness_input.setValue(1.5)
         self._stiffness_input.valueChanged.connect(self.simulate)
-        
+        stiffness_label.setBuddy(self._stiffness_input)
         
         central_widget_layout = QtGui.QVBoxLayout(central_widget)
         central_widget_layout.setContentsMargins(0, 0, 0, 0)
         central_widget_layout.setSpacing(0)
         central_widget_layout.addWidget(parameters_pane)
         central_widget_layout.addWidget(self._plotWidget)
+        central_widget_layout.addWidget(self._exceptionWidget)
         
         parameters_pane_layout = QtGui.QGridLayout(parameters_pane)
         parameters_pane_layout.addWidget(mass_label, 0, 0)
@@ -90,11 +97,11 @@ class MainWindow(QtGui.QMainWindow):
         parameters_pane_layout.addWidget(self._stiffness_input, 1, 1)
         parameters_pane_layout.setColumnStretch(2, 1)
 
-        central_widget.setFocus()
+        self._mass_input.setFocus()
         self.setCentralWidget(central_widget)
-        
-        self.simulate()
 
+        self.simulate()
+        
     def fileQuit(self):
         self.close()
 
@@ -102,26 +109,42 @@ class MainWindow(QtGui.QMainWindow):
         self.fileQuit()
 
     def simulate(self):
-        from systems import Pendulum
+        try:
+            self._exceptionWidget.setText("")
+            
+            from systems import Pendulum
+    
+            pendulum = Pendulum()
+            pendulum.spring.stiffness = round(self._stiffness_input.value(), 5)
+            pendulum.mass.mass        = round(self._mass_input.value(), 5)
+            # It should be irrelevant which one we assign to, because it's the same variable
+            pendulum.mass.position = 1
+            #pendulum.spring.displacement = 1
+    
+            t = np.arange(0, 10, 0.1)
+            x = np.zeros(np.size(t))
+    
+            for i in range(len(t)):
+                x[i] = pendulum.mass.position
+    
+                dt = t[i]-t[i-1] if i>0 else None
+                pendulum.update(t[i], dt)
+    
+            self._plotWidget.clear()
+            self._plotWidget.plot(t, x)
 
-        pendulum = Pendulum()
-        pendulum.spring.stiffness = self._stiffness_input.value()
-        pendulum.mass.mass = self._mass_input.value()
-        # It should be irrelevant which one we assign to, because it's the same variable
-        pendulum.mass.position = 1
-        #pendulum.spring.displacement = 1
+            self._exceptionWidget.hide()
+            self._plotWidget.show()
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            s="".join(traceback.format_exception(exc_type, exc_value, exc_traceback, chain=True))
+            self._exceptionWidget.setText(s)
 
-        t = np.arange(0, 10, 0.1)
-        x = np.zeros(np.size(t))
+            self._exceptionWidget.show()
+            self._plotWidget.hide()
+            
 
-        for i in range(len(t)):
-            x[i] = pendulum.mass.position
 
-            dt = t[i]-t[i-1] if i>0 else None
-            pendulum.update(t, dt)
-
-        self._plotWidget.clear()
-        self._plotWidget.plot(t, x)        
 
 
 
