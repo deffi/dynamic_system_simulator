@@ -115,20 +115,20 @@ class MainWindow(QtGui.QMainWindow):
             from systems import Pendulum
     
             pendulum = Pendulum()
-            pendulum.spring.stiffness = round(self._stiffness_input.value(), 5)
-            pendulum.mass.mass        = round(self._mass_input.value(), 5)
+            pendulum.spring.stiffness.set(round(self._stiffness_input.value(), 5))
+            pendulum.mass.mass       .set(round(self._mass_input.value(), 5))
             # It should be irrelevant which one we assign to, because it's the same variable
-            pendulum.mass.position = 1
+            pendulum.mass.position.set(1)
             #pendulum.spring.displacement = 1
     
             t = np.arange(0, 10, 0.1)
             x = np.zeros(np.size(t))
     
             for i in range(len(t)):
-                x[i] = pendulum.mass.position
+                x[i] = pendulum.mass.position.get()
     
                 dt = t[i]-t[i-1] if i>0 else None
-                pendulum.update(t[i], dt)
+                pendulum.do_update(t[i], dt)
     
             self._plotWidget.clear()
             self._plotWidget.plot(t, x)
@@ -142,11 +142,6 @@ class MainWindow(QtGui.QMainWindow):
 
             self._exceptionWidget.show()
             self._plotWidget.hide()
-            
-
-
-
-
 
 app = QtGui.QApplication(sys.argv)
 
