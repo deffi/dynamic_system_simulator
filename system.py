@@ -1,5 +1,8 @@
 from variable import Variable
 
+# FIXME current: use properties
+# http://docs.python.org/2/library/functions.html#property
+
 class System:
     def __init__(self):
         self._variables={}
@@ -7,21 +10,11 @@ class System:
 
         self.setup()
 
-    # FIXME do we need pre_update and post_update, performed before and after
-    # subsystem updates?
-    def do_update(self, t, dt):
-        self.update(t, dt)
-        for subsystem in self._subsystems.values():
-            subsystem.do_update(t, dt)
-
     def _variable(self, name):
         variable = Variable()
         self._variables[name] = variable
         setattr(self, name, variable)
         return variable
-
-    def update(self, t, dt):
-        pass
 
     def subsystem(self, name, system):
         self._subsystems[name] = system
@@ -41,3 +34,17 @@ class System:
         
     def connect(self, a, b):
         a.connect(b)
+        
+    def update(self, t, dt):
+        for subsystem in self._subsystems.values():
+            subsystem.update(t, dt)
+
+
+#     def getx(self):
+#         return self._x
+#     def setx(self, value):
+#         self._x = value
+#     def delx(self):
+#         del self._x
+#     x = property(getx, setx, delx, "I'm the 'x' property.")
+#     

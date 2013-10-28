@@ -1,5 +1,5 @@
 from system import System
-        
+
 class Spring(System):
     def setup(self):
         self.input("displacement")
@@ -25,6 +25,12 @@ class Mass(System):
         self.acceleration.set(self.force.get() / self.mass.get())
         self.velocity.set(self.velocity.get() + self.acceleration.get() * (dt or 0))
         self.position.set(self.position.get() + self.velocity    .get() * (dt or 0))
+
+        #self.position.set(self.position.get() + self.velocity    .get() * (dt or 0))
+        #self.position += self.velocity * (dt or 0)
+        #position.set(position.get() + velocity.get() * (dt or 0))
+        #position += velocity * (dt or 0)
+        
 
 class Pendulum(System):
     def setup(self):

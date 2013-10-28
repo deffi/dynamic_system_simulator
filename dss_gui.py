@@ -128,7 +128,7 @@ class MainWindow(QtGui.QMainWindow):
                 x[i] = pendulum.mass.position.get()
     
                 dt = t[i]-t[i-1] if i>0 else None
-                pendulum.do_update(t[i], dt)
+                pendulum.update(t[i], dt)
     
             self._plotWidget.clear()
             self._plotWidget.plot(t, x)
