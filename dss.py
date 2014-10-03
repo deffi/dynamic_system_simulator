@@ -1,6 +1,6 @@
 import math
-import numpy as np
-from matplotlib import pyplot as plt
+#import numpy as np
+# from matplotlib import pyplot as plt
 
 '''
 
@@ -13,24 +13,38 @@ from matplotlib import pyplot as plt
 
 '''
 
-from systems import Pendulum
+from systems import SimplePendulum
 
-pendulum = Pendulum()
+from simple_plot import plot
 
-pendulum.spring.stiffness.set(1.5)
-pendulum.mass.mass.set(0.5)
-# It should be irrelevant which one we assign to, because it's the same variable
-pendulum.mass.position.set(1)
-#pendulum.spring.displacement = 1
+# pendulum = Pendulum()
+# 
+# pendulum.spring.stiffness.set(1.5)
+# pendulum.mass.mass.set(0.5)
+# # It should be irrelevant which one we assign to, because it's the same variable
+# pendulum.mass.position.set(1)
+# #pendulum.spring.displacement = 1
 
-t = np.arange(0, 10, 0.1)
-x = np.zeros(np.size(t))
+# t = np.arange(0, 10, 0.1)
+# x = np.zeros(np.size(t))
 
+pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1, initial_position=1)
+# OK, here's the thing: I'd like to be able to set pendulum.position without
+# worrying about the inner workings of SimplePendulum. Ditto for pendulum.mass
+# etc. FIXME
+
+t = [t*0.1 for t in range(150)]
+x = [0] * len(t)
+ 
 for i in range(len(t)):
-    x[i] = pendulum.mass.position.get()
-
+    x[i] = pendulum.mass.position
+ 
     dt = t[i]-t[i-1] if i>0 else None
-    pendulum.update(t[i], dt)
+    if i>0:
+        pendulum.update(t[i], dt)
 
-plt.plot(t, x)        
-plt.show()
+plot(t, x, w=120, h=15)
+
+
+# plt.plot(t, x)        
+# plt.show()

@@ -19,12 +19,52 @@ from system import System
 # 
 # class 
 
-class BetterMass(System):
+class SimpleMass(System):
+    def __init__(self, mass, position = 0, velocity = 0):
+        # Parameters
+        self.mass = mass
+        # Inputs
+        self.force = 0
+        # Outputs
+        self.velocity = velocity
+        self.position = position
+        self.acceleration = 0
+        
     def update(self, t, dt):
         self.acceleration = self.force / self.mass
-        self.velocity += self.acceleration * (dt or 0)
-        self.position += self.velocity     * (dt or 0)
+        self.velocity += self.acceleration * dt
+        self.position += self.velocity     * dt
 
+class SimpleSpring(System):
+    def __init__(self, stiffness = 1):
+        # Parameters
+        self.stiffness = stiffness
+        # Inputs
+        self.displacement = None
+        # Outputs
+        self. force = None
+    
+    def update(self, t, dt):
+        self.force = - self.displacement * self.stiffness
+
+class SimplePendulum(System):
+    def __init__(self, mass, stiffness, friction_coefficient, initial_position):
+        # Parameters
+        # Inputs
+        # Outputs
+        # Subsystems
+        # TODO next exercise: add friction
+        self.mass = SimpleMass(mass, position = initial_position)
+        self.spring = SimpleSpring(stiffness)
+        self.friction_coefficient = friction_coefficient
+        
+    def update(self, t, dt):
+        self.mass.update(t, dt)
+        self.spring.displacement = self.mass.position
+        self.spring.update(t, dt)
+        friction = self.friction_coefficient * self.mass.velocity
+        self.mass.force = self.spring.force - friction
+        
     
 
 class Mass(System):
