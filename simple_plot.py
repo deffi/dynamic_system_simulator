@@ -1,30 +1,54 @@
 import math
+from collections import namedtuple
+
+Range = namedtuple("range", ("min", "max"))
+
+
+def minmax(range_list):
+    min_max = list(zip(*range_list))
+    return Range(min(min_max[0]), max(min_max[1]))
+
+class Series:
+    def __init__(self, x, y, character = "#"):
+        self._x = x
+        self._y = y
+        self._character = character
+        
+    def x_range(self):
+        return Range(min(self._x), max(self._x))
+    
+    def y_range(self):
+        return Range(min(self._y), max(self._y))
+        
 
 class SimplePlot:
-    '''
-    Note that all plots are currently scaled to full width/height individually.
-    '''
-    def __init__(self, w = 80, h = 25, background = "·"):
-        self._w = w
-        self._h = h
-        self._area = [[background for _ in range(w)] for _ in range(h)]
+    def __init__(self):
+        self._series = []
     
     def plot(self, x, y, character = '#'):
-        x_min = min(x)    
-        x_max = max(x)
-        y_min = min(y)
-        y_max = max(y)
+        self._series.append(Series(x, y, character))
     
-        for xx, yy in zip(x,y):
-            ix = (self._w-1)*(xx-x_min)/(x_max-x_min)
-            iy = (self._h-1)*(yy-y_min)/(y_max-y_min)
-            self._area[round(iy)][round(ix)] = character
+    def render(self, w = 80, h = 25, background = "·"):
+        area = [[background for _ in range(w)] for _ in range(h)]
 
-    def to_string(self):
-        return "\n".join(["".join(line) for line in reversed(self._area)])
+        x_range = minmax([series.x_range() for series in self._series])
+        y_range = minmax([series.y_range() for series in self._series])
+        
+        for series in self._series:
+            for xx, yy in zip(series._x, series._y):
+                ix = (w-1)*(xx-x_range.min)/(x_range.max-x_range.min)
+                iy = (h-1)*(yy-y_range.min)/(y_range.max-y_range.min)
+                area[round(iy)][round(ix)] = series._character
 
-    def dump(self):
-        print(self.to_string())
+        return area
+
+    def to_string(self, *args, **kwargs):
+        area = self.render(*args, **kwargs)
+        return "\n".join(["".join(line) for line in reversed(area)])
+
+    def dump(self, *args, **kwargs):
+        print(self.to_string(*args, **kwargs))
+
 
 def plot(x, y, w, h):
     p=SimplePlot(w, h)
@@ -36,7 +60,7 @@ if __name__ == "__main__":
     y1 = [math.sin(x) for x in x]
     y2 = [math.cos(x) for x in x]
 
-    p=SimplePlot(w=80, h=15)
+    p=SimplePlot()
     p.plot(x, y1)
     p.plot(x[30:50], y2[30:50], character="*")
-    p.dump()
+    p.dump(w=80, h=15)
