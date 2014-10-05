@@ -1,0 +1,12 @@
+Goal:
+* Setting pendulum.mass.position or pendulum.spring.displacement must be the
+  same thing.
+  We don't want a pendulum.position, because we don't want to duplicate every
+  single internal value.
+  
+Open questions:
+* parameters
+* setting initial values from outside (like parameters, or as parameters)
+* subsystems (e. g. vehicle with 4 wheels)
+* visualization (also internal values: pwm values in a motor controller system,
+  integral error in a PID controller)

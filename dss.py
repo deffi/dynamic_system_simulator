@@ -1,17 +1,6 @@
 #import numpy as np
 # from matplotlib import pyplot as plt
 
-'''
-
-# Open questions:
-#   - parameters
-#   - setting initial values from outside (like parameters, or as parameters)
-#   - subsystems (e. g. vehicle with 4 wheels)
-#   - visualization (also internal values: pwm values in a motor controller
-#     system, integral error in a PID controller)
-
-'''
-
 from systems import SimplePendulum
 
 from simple_plot.simple_plot import plot
@@ -28,9 +17,6 @@ from simple_plot.simple_plot import plot
 # x = np.zeros(np.size(t))
 
 pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1, initial_position=1)
-# OK, here's the thing: I'd like to be able to set pendulum.position without
-# worrying about the inner workings of SimplePendulum. Ditto for pendulum.mass
-# etc. FIXME
 
 t = [t*0.1 for t in range(150)]
 x = [0] * len(t)
