@@ -3,10 +3,9 @@ from collections import namedtuple
 
 Range = namedtuple("range", ("min", "max"))
 
-
 def minmax(range_list):
-    min_max = list(zip(*range_list))
-    return Range(min(min_max[0]), max(min_max[1]))
+    mins, maxs = list(zip(*range_list))
+    return Range(min(mins), max(maxs))
 
 class Area:
     def __init__(self, width, height, background):
@@ -15,8 +14,7 @@ class Area:
         self._area = [[background for _ in range(width)] for _ in range(height)]
 
     def is_inside(self, p):
-        x = p[0]
-        y = p[1]
+        x, y = p
         return x >= 0 and y >= 0 and x < self._width and y < self._height
 
     def paint(self, p, character, ignore_outside = False):
@@ -27,9 +25,22 @@ class Area:
             else:
                 raise ValueError("Point %s is outside the area" % (p))
 
-        x = round(p[0])
-        y = round(p[1])
-        self._area[y][x] = character
+        x, y = p
+        self._area[round(y)][round(x)] = character
+
+    def paint_horizontal_line(self, y, character, ignore_outside = False):
+        for x in range(self._width):
+            self.paint((x, y), character, ignore_outside)
+
+    def paint_vertical_line(self, x, character, ignore_outside = False):
+        for y in range(self._height):
+            self.paint((x, y), character, ignore_outside)
+
+    def paint_cross(self, p, horizontal_character, vertical_character, center_character, ignore_outside):
+        x, y = p
+        self.paint_horizontal_line(y, "-", ignore_outside)
+        self.paint_vertical_line(x, "|", ignore_outside)
+        self.paint(p, "+", ignore_outside)
 
     def to_string(self):
         return "\n".join(["".join(line) for line in reversed(self._area)])
@@ -59,20 +70,13 @@ class SimplePlot:
         y_range = minmax([series.y_range() for series in self._series])
 
         def transform(p):
-            x = p[0]
-            y = p[1]
+            x, y = p
             tx = (w-1)*(x-x_range.min)/(x_range.max-x_range.min)
             ty = (h-1)*(y-y_range.min)/(y_range.max-y_range.min)
             return (tx, ty)
 
         area = Area(w, h, background)
-        
-        xo, yo = transform((0, 0))
-        for x in range(w):
-            area.paint((x, yo), "-", ignore_outside = True)
-        for y in range(h):
-            area.paint((xo, y), "|", ignore_outside = True)
-        area.paint((xo, yo), "+", ignore_outside = True)
+        area.paint_cross(transform((0, 0)), "-", "|", "+", ignore_outside = True)
         
         for series in self._series:
             for x, y in zip(series._x, series._y):
