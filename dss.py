@@ -1,4 +1,3 @@
-import math
 #import numpy as np
 # from matplotlib import pyplot as plt
 
@@ -15,7 +14,7 @@ import math
 
 from systems import SimplePendulum
 
-from simple_plot import plot
+from simple_plot.simple_plot import plot
 
 # pendulum = Pendulum()
 # 
@@ -43,7 +42,7 @@ for i in range(len(t)):
     if i>0:
         pendulum.update(t[i], dt)
 
-plot(t, x, w=120, h=15)
+plot(t, x, w=120, h=15, background = " ")
 
 
 # plt.plot(t, x)        

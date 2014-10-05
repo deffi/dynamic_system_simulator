@@ -1,6 +1,15 @@
 import math
 from collections import namedtuple
-from area import Area  # @UnresolvedImport
+
+# FIXME better solution?
+#from simple_plot.area import Area # Included as module
+#from area import Area # Executed directly
+if __name__ == "__main__":
+    # Executing directly
+    from area import Area  # @UnresolvedImport
+else:
+    # Included as module
+    from simple_plot.area import Area
 
 Range = namedtuple("range", ("min", "max"))
 
@@ -57,10 +66,10 @@ class SimplePlot:
 
 
 
-def plot(x, y, w, h):
-    p=SimplePlot(w, h)
+def plot(x, y, w, h, background):
+    p = SimplePlot()
     p.plot(x, y)
-    p.dump()
+    p.dump(w, h, background)
 
 if __name__ == "__main__":
     x = [0.1*x-1 for x in range(100)]
