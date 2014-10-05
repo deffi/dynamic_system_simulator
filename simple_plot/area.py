@@ -44,6 +44,11 @@ class AbstractArea:
 
         x, y = p
         self.do_paint(round(x), round(y), character)
+
+    def paint_text(self, p, text, ignore_outside = False):
+        x, y = p
+        for i in range(len(text)):
+            self.paint((x + i, y), text[i], ignore_outside)
         
     def paint_horizontal_line(self, y, character, ignore_outside = False):
         for x in range(self._width):
@@ -59,7 +64,12 @@ class AbstractArea:
         self.paint_vertical_line(x, vline, ignore_outside)
         self.paint(p, cross, ignore_outside)
 
-    def paint_frame(self, corner, size, ignore_outside = False):
+    def paint_frame(self, corner = None, size = None, ignore_outside = False):
+        if corner is None:
+            corner = (0, 0)
+        if size is None:
+            size = (self._width - 1 - corner[0], self._height - 1 - corner[1])
+        
         x0, y0 = corner
         w, h = size
         for x in range(x0+1, x0+w):
@@ -78,6 +88,9 @@ class AbstractArea:
 
     def sub_area(self, offset, width, height):
         return AreaProxy(self, offset, width, height)
+    
+    def shrink(self, margin):
+        return self.sub_area((margin, margin), self._width-2*margin, self._height-2*margin)
 
 
 class Area(AbstractArea):
