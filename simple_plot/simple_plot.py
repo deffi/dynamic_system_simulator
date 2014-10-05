@@ -2,6 +2,7 @@ import math
 from collections import namedtuple
 
 # TODO:
+#   * make sure that the axes line is actually precisely at 0 (unless removed)
 #   * verify that the area is wide enough for legend and plot area
 
 # FIXME better solution?
