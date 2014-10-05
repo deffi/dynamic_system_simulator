@@ -3,6 +3,32 @@ from collections import namedtuple
 
 Range = namedtuple("range", ("min", "max"))
 
+# ASCII
+# vline = "|"
+# hline = "-"
+# cross = "+"
+# top_left = "."
+# top_right = "."
+# bottom_left = "'"
+# bottom_right = "'"
+# up = "^"
+# down = "v"
+# left = "<"
+# right = ">"
+
+# Unicode
+vline = "│"
+hline = "─"
+cross = "┼"
+top_left = "┌"
+top_right = "┐"
+bottom_left = "└"
+bottom_right = "┘"
+up = "▲"
+down = "▼"
+left = "◄"
+right = "►"
+
 def minmax(range_list):
     mins, maxs = list(zip(*range_list))
     return Range(min(mins), max(maxs))
@@ -42,25 +68,25 @@ class Area:
         for y in range(self._height):
             self.paint((x, y), character, ignore_outside)
 
-    def paint_cross(self, p, horizontal_character, vertical_character, center_character, ignore_outside = False):
+    def paint_cross(self, p, ignore_outside = False):
         x, y = p
-        self.paint_horizontal_line(y, "-", ignore_outside)
-        self.paint_vertical_line(x, "|", ignore_outside)
-        self.paint(p, "+", ignore_outside)
+        self.paint_horizontal_line(y, hline, ignore_outside)
+        self.paint_vertical_line(x, vline, ignore_outside)
+        self.paint(p, cross, ignore_outside)
 
     def paint_frame(self, corner, size, ignore_outside = False):
         x0, y0 = corner
         w, h = size
         for x in range(x0+1, x0+w):
-            self.paint((x, y0), "-", ignore_outside)
-            self.paint((x, y0+h), "-", ignore_outside)
+            self.paint((x, y0), hline, ignore_outside)
+            self.paint((x, y0+h), hline, ignore_outside)
         for y in range(y0+1, y0+h):
-            self.paint((x0, y), "|", ignore_outside)
-            self.paint((x0+w, y), "|", ignore_outside)
-        self.paint((x0, y0), "'", ignore_outside)
-        self.paint((x0+w, y0), "'", ignore_outside)
-        self.paint((x0, y0+h), ".", ignore_outside)
-        self.paint((x0+w, y0+h), ".", ignore_outside)
+            self.paint((x0, y), vline, ignore_outside)
+            self.paint((x0+w, y), vline, ignore_outside)
+        self.paint((x0, y0), bottom_left, ignore_outside)
+        self.paint((x0+w, y0), bottom_right, ignore_outside)
+        self.paint((x0, y0+h), top_left, ignore_outside)
+        self.paint((x0+w, y0+h), top_right, ignore_outside)
 
     def to_string(self):
         return "\n".join(["".join(line) for line in reversed(self._area)])
@@ -98,7 +124,7 @@ class SimplePlot:
             return (tx, ty)
 
         area = Area(w+2, h+2, background)
-        area.paint_cross(transform((0, 0)), "-", "|", "+", ignore_outside = True)
+        area.paint_cross(transform((0, 0)), ignore_outside = True)
         area.paint_frame((0, 0), (w+1, h+1))
 
         area.set_offset((1, 1))        
