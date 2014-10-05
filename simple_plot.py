@@ -12,6 +12,11 @@ class Area:
         self._width = width
         self._height = height
         self._area = [[background for _ in range(width)] for _ in range(height)]
+        # Temporary hack, better solution would be a subarea proxy
+        self._offset = (0, 0)
+
+    def set_offset(self, offset):
+        self._offset = offset
 
     def is_inside(self, p):
         x, y = p
@@ -23,10 +28,11 @@ class Area:
             if ignore_outside:
                 return
             else:
-                raise ValueError("Point %s is outside the area" % (p))
+                raise ValueError("Point %s is outside the area %s" % (p, (self._width, self._height)))
 
         x, y = p
-        self._area[round(y)][round(x)] = character
+        ox, oy = self._offset
+        self._area[round(y+oy)][round(x+ox)] = character
 
     def paint_horizontal_line(self, y, character, ignore_outside = False):
         for x in range(self._width):
@@ -36,14 +42,30 @@ class Area:
         for y in range(self._height):
             self.paint((x, y), character, ignore_outside)
 
-    def paint_cross(self, p, horizontal_character, vertical_character, center_character, ignore_outside):
+    def paint_cross(self, p, horizontal_character, vertical_character, center_character, ignore_outside = False):
         x, y = p
         self.paint_horizontal_line(y, "-", ignore_outside)
         self.paint_vertical_line(x, "|", ignore_outside)
         self.paint(p, "+", ignore_outside)
 
+    def paint_frame(self, corner, size, ignore_outside = False):
+        x0, y0 = corner
+        w, h = size
+        for x in range(x0+1, x0+w):
+            self.paint((x, y0), "-", ignore_outside)
+            self.paint((x, y0+h), "-", ignore_outside)
+        for y in range(y0+1, y0+h):
+            self.paint((x0, y), "|", ignore_outside)
+            self.paint((x0+w, y), "|", ignore_outside)
+        self.paint((x0, y0), "'", ignore_outside)
+        self.paint((x0+w, y0), "'", ignore_outside)
+        self.paint((x0, y0+h), ".", ignore_outside)
+        self.paint((x0+w, y0+h), ".", ignore_outside)
+
     def to_string(self):
         return "\n".join(["".join(line) for line in reversed(self._area)])
+
+
 
 class Series:
     def __init__(self, x, y, character = "#"):
@@ -75,9 +97,11 @@ class SimplePlot:
             ty = (h-1)*(y-y_range.min)/(y_range.max-y_range.min)
             return (tx, ty)
 
-        area = Area(w, h, background)
+        area = Area(w+2, h+2, background)
         area.paint_cross(transform((0, 0)), "-", "|", "+", ignore_outside = True)
-        
+        area.paint_frame((0, 0), (w+1, h+1))
+
+        area.set_offset((1, 1))        
         for series in self._series:
             for x, y in zip(series._x, series._y):
                 area.paint(transform((x, y)), series._character)
