@@ -31,20 +31,20 @@ class SimplePlot:
         x_range = minmax([series.x_range() for series in self._series])
         y_range = minmax([series.y_range() for series in self._series])
 
+        area = Area(w, h, background)
+        area.paint_frame((0, 0), (w-1, h-1))
+
         def transform(p):
             x, y = p
-            tx = (w-1)*(x-x_range.min)/(x_range.max-x_range.min)
-            ty = (h-1)*(y-y_range.min)/(y_range.max-y_range.min)
+            tx = (w-2-1)*(x-x_range.min)/(x_range.max-x_range.min)
+            ty = (h-2-1)*(y-y_range.min)/(y_range.max-y_range.min)
             return (tx, ty)
-
-        area = Area(w+2, h+2, background)
-        area.paint_cross(transform((0, 0)), ignore_outside = True)
-        area.paint_frame((0, 0), (w+1, h+1))
-
-        area.set_offset((1, 1))        
+ 
+        chart_area = area.sub_area((1, 1), w-2, h-2)
+        chart_area.paint_cross(transform((0, 0)), ignore_outside = True)
         for series in self._series:
             for x, y in zip(series._x, series._y):
-                area.paint(transform((x, y)), series._character)
+                chart_area.paint(transform((x, y)), series._character)
 
         return area
 
@@ -70,4 +70,4 @@ if __name__ == "__main__":
     p=SimplePlot()
     p.plot(x, y1)
     p.plot(x[30:50], y2[30:50], character="*")
-    p.dump(w=80, h=15, background = " ")
+    p.dump(w=82, h=17, background = " ")

@@ -25,16 +25,10 @@ left = "◄"
 right = "►"
 
 
-class Area:
-    def __init__(self, width, height, background):
+class AbstractArea:
+    def __init__(self, width, height):
         self._width = width
         self._height = height
-        self._area = [[background for _ in range(width)] for _ in range(height)]
-        # Temporary hack, better solution would be a subarea proxy
-        self._offset = (0, 0)
-
-    def set_offset(self, offset):
-        self._offset = offset
 
     def is_inside(self, p):
         x, y = p
@@ -49,9 +43,8 @@ class Area:
                 raise ValueError("Point %s is outside the area %s" % (p, (self._width, self._height)))
 
         x, y = p
-        ox, oy = self._offset
-        self._area[round(y+oy)][round(x+ox)] = character
-
+        self.do_paint(round(x), round(y), character)
+        
     def paint_horizontal_line(self, y, character, ignore_outside = False):
         for x in range(self._width):
             self.paint((x, y), character, ignore_outside)
@@ -83,3 +76,24 @@ class Area:
     def to_string(self):
         return "\n".join(["".join(line) for line in reversed(self._area)])
 
+    def sub_area(self, offset, width, height):
+        return AreaProxy(self, offset, width, height)
+
+
+class Area(AbstractArea):
+    def __init__(self, width, height, background):
+        super(Area, self).__init__(width, height)
+        self._area = [[background for _ in range(width)] for _ in range(height)]
+
+    def do_paint(self, x, y, character):
+        self._area[y][x] = character
+
+
+class AreaProxy(AbstractArea):
+    def __init__(self, target, offset, width, height):
+        super(AreaProxy, self).__init__(width, height)
+        self._target = target
+        self._offset = offset
+
+    def do_paint(self, x, y, character):
+        self._target.do_paint(x + self._offset[0], y + self._offset[1], character)
