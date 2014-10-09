@@ -37,7 +37,7 @@ class Damper(System):
         super(Damper, self).__init__(name)
         
         self.damping = damping
-        
+
         self.add_input("velocity", 0)
         self.add_output("force", 0)
         
@@ -45,10 +45,10 @@ class Damper(System):
         self.force = - self.velocity * self.damping
 
 class Pendulum(System):
-    def __init__(self, name, mass, stiffness, damping, gravity):
+    def __init__(self, name, mass, stiffness, damping):
         super(Pendulum, self).__init__(name)
 
-        self.gravity = gravity
+        self.add_input("gravity", 0)
 
         mass   = self.add_subsystem(Mass  ("mass"  , mass))
         spring = self.add_subsystem(Spring("spring", stiffness))

@@ -9,10 +9,10 @@ from systems import Pendulum
 # t = np.arange(0, 10, 0.1)
 # x = np.zeros(np.size(t))
 
-pendulum = Pendulum("pendulum", mass=0.5, stiffness=1.5, damping=0.1, gravity = 0.5)
+pendulum = Pendulum("pendulum", mass=0.5, stiffness=1.5, damping=0.1)
 
-# Or pendulum.spring.displacement
-pendulum.mass.position=1
+pendulum.mass.position = 1
+pendulum.gravity = -0.5
 
 print_system(pendulum)
 
