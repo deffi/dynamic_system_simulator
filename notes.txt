@@ -1,8 +1,9 @@
 Next:
-* When making multiple connections, or connecting from the outside, do we
-  overwrite previously make connections?
-  Seems so. Solution: only connect inputs to others, and 
-
+* Note: there can be assignment to reference variables: manually setting
+  pendulum.spring.displacement.
+* Arithmetic with variables would be useful
+* Connecting to constant/function input
+* There should be different Variable subclasses instead of large elifs   
 
 Goal:
 * Setting pendulum.mass.position or pendulum.spring.displacement must be the
@@ -12,6 +13,7 @@ Goal:
 * We'll need a mechanism for enumerating (a) variables and (b) subsystems
   
 Open questions:
+* Make sure that all inputs are connected?
 * Do we distinguish between internal values and outputs? Between inputs and outputs?
 * parameters
 * setting initial values from outside (like parameters, or as parameters)

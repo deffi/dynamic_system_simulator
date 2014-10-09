@@ -16,7 +16,7 @@ pendulum.mass.position=1
 
 print_system(pendulum)
 
-t = [t*0.1 for t in range(150)]
+t = [t*0.1 for t in range(120)]
 x = [0] * len(t)
  
 for i in range(len(t)):
@@ -26,7 +26,7 @@ for i in range(len(t)):
     if i>0:
         pendulum.update(t[i], dt)
 
-#plot(t, x, w=120, h=15, background = " ")
+plot(t, x, w=120, h=15, background = " ")
 
 
 # plt.plot(t, x)        

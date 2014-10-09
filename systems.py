@@ -36,12 +36,14 @@ class SimplePendulum(System):
     def __init__(self, name, mass, stiffness, friction_coefficient):
         super(SimplePendulum, self).__init__(name)
 
+        self.friction_coefficient = friction_coefficient
+
         self.add_subsystem(SimpleMass("mass", mass))
         self.add_subsystem(SimpleSpring("spring", stiffness))
         
         self.spring.variables.displacement.connect(self.mass.variables.position)
-        self.mass.variables.force.connect(self.spring.variables.force)
-        
+        #self.mass.variables.force.connect(self.spring.variables.force)
+        self.mass.variables.force.connect(lambda: self.spring.force - self.friction_coefficient * self.mass.velocity)
         # TODO re-enable:
         #self.friction_coefficient = friction_coefficient
         # mass.force = spring.force - friction_coefficient * mass.velocity
