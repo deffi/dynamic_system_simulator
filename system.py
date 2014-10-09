@@ -1,7 +1,17 @@
 from variable import Variable
 
-# FIXME current: use properties
-# http://docs.python.org/2/library/functions.html#property
+class Variable():
+    def __init__(self, value = None):
+        self._value = value
+        
+    def set(self, value):
+        self._value = value
+
+    def get(self):
+        return self._value
+    
+        
+        
 
 class System:
     def __init__(self):
