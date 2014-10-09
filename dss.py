@@ -16,13 +16,19 @@ from simple_plot.simple_plot import plot
 # t = np.arange(0, 10, 0.1)
 # x = np.zeros(np.size(t))
 
-pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1, initial_position=1)
+pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1)
+
+# Now we can set pendulum.mass.position or pendulum.spring.displacement, at our
+# choice.
+# Next: make it possible to write pendulum.mass.position=1 instead of calling set()
+pendulum.mass.position.set(1)
+#pendulum.spring.displacement.set(1)
 
 t = [t*0.1 for t in range(150)]
 x = [0] * len(t)
  
 for i in range(len(t)):
-    x[i] = pendulum.mass.position
+    x[i] = pendulum.mass.position.get()
  
     dt = t[i]-t[i-1] if i>0 else None
     if i>0:

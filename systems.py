@@ -1,68 +1,59 @@
 from system import System
  
-# def getx(self):
-#     print("getting it")
-#     return self._x
-# 
-# def setx(self, value):
-#     print("setting it")
-#     self._x = value
-#     
-# def delx(self):
-#     print("deleting it")
-#     del self._x
-# 
-# MyClass.x = property(getx, setx, delx, "I'm the 'x' property.")
-
-# def variable_property(variable):
-#     def getter(self, ):
-# 
-# class 
-
 class SimpleMass(System):
     def __init__(self, mass, position = 0, velocity = 0):
+        super(SimpleMass, self).__init__()
         # Parameters
         self.mass = mass
         # Inputs
-        self.force = 0
+        self.add_input("force", 0)
         # Outputs
-        self.velocity = velocity
-        self.position = position
-        self.acceleration = 0
+        self.add_output("velocity", 0)
+        self.add_output("position", 0)
+        self.add_output("acceleration", 0)
         
     def update(self, t, dt):
-        self.acceleration = self.force / self.mass
-        self.velocity += self.acceleration * dt
-        self.position += self.velocity     * dt
+        self.acceleration.set(self.force.get() / self.mass)
+        self.velocity.set(self.velocity.get() + self.acceleration.get() * dt)
+        self.position.set(self.position.get() + self.velocity.get()     * dt)
 
 class SimpleSpring(System):
     def __init__(self, stiffness = 1):
+        super(SimpleSpring, self).__init__()
+
         # Parameters
         self.stiffness = stiffness
         # Inputs
-        self.displacement = None
+        self.add_input("displacement", 0)
         # Outputs
-        self. force = None
+        self.add_output("force", 0)
     
     def update(self, t, dt):
-        self.force = - self.displacement * self.stiffness
+        self.force.set( - self.displacement.get() * self.stiffness)
 
 class SimplePendulum(System):
-    def __init__(self, mass, stiffness, friction_coefficient, initial_position):
+    def __init__(self, mass, stiffness, friction_coefficient):
+        super(SimplePendulum, self).__init__()
+
         # Parameters
         # Inputs
         # Outputs
         # Subsystems
-        self.mass = SimpleMass(mass, position = initial_position)
-        self.spring = SimpleSpring(stiffness)
-        self.friction_coefficient = friction_coefficient
+        self.add_subsystem("mass", SimpleMass(mass))
+        self.add_subsystem("spring", SimpleSpring(stiffness))
         
-    def update(self, t, dt):
-        self.mass.update(t, dt)
         self.spring.displacement = self.mass.position
-        self.spring.update(t, dt)
-        friction = self.friction_coefficient * self.mass.velocity
-        self.mass.force = self.spring.force - friction
+        self.mass.force = self.spring.force
+        
+        # TODO re-enable
+        #self.friction_coefficient = friction_coefficient
+        
+#     def update(self, t, dt):
+#         self.mass.update(t, dt)
+#         self.spring.displacement = self.mass.position
+#         self.spring.update(t, dt)
+#         friction = self.friction_coefficient * self.mass.velocity
+#         self.mass.force = self.spring.force - friction
         
     
 
