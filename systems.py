@@ -1,8 +1,8 @@
 from system import System
  
 class SimpleMass(System):
-    def __init__(self, mass, position = 0, velocity = 0):
-        super(SimpleMass, self).__init__()
+    def __init__(self, name, mass, position = 0, velocity = 0):
+        super(SimpleMass, self).__init__(name)
 
         # Parameters
         self.mass = mass
@@ -19,8 +19,8 @@ class SimpleMass(System):
         self.position += self.velocity     * dt
 
 class SimpleSpring(System):
-    def __init__(self, stiffness = 1):
-        super(SimpleSpring, self).__init__()
+    def __init__(self, name, stiffness = 1):
+        super(SimpleSpring, self).__init__(name)
 
         # Parameters
         self.stiffness = stiffness
@@ -33,15 +33,11 @@ class SimpleSpring(System):
         self.force = - self.displacement * self.stiffness
 
 class SimplePendulum(System):
-    def __init__(self, mass, stiffness, friction_coefficient):
-        super(SimplePendulum, self).__init__()
+    def __init__(self, name, mass, stiffness, friction_coefficient):
+        super(SimplePendulum, self).__init__(name)
 
-        # Parameters
-        # Inputs
-        # Outputs
-        # Subsystems
-        self.add_subsystem("mass", SimpleMass(mass))
-        self.add_subsystem("spring", SimpleSpring(stiffness))
+        self.add_subsystem(SimpleMass("mass", mass))
+        self.add_subsystem(SimpleSpring("spring", stiffness))
         
         self.spring.variables.displacement.connect(self.mass.variables.position)
         self.mass.variables.force.connect(self.spring.variables.force)

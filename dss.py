@@ -9,8 +9,7 @@ from simple_plot.simple_plot import plot
 # t = np.arange(0, 10, 0.1)
 # x = np.zeros(np.size(t))
 
-pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1)
-pendulum.name = "pendulum"
+pendulum = SimplePendulum("pendulum", mass=0.5, stiffness=1.5, friction_coefficient=0.1)
 
 # Or pendulum.spring.displacement
 pendulum.mass.position=1

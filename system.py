@@ -4,10 +4,10 @@ class Container:
     pass
 
 class System:
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.variables = Container()
         self.subsystems=[]
-        self.name = None
         self.parent = None
 
     def add_variable(self, name, initial_value = None):
@@ -21,11 +21,10 @@ class System:
     def add_output(self, name, initial_value = None):
         self.add_variable(name, initial_value)
 
-    def add_subsystem(self, name, system):
-        system.name = name
+    def add_subsystem(self, system):
         system.parent = self
         self.subsystems.append(system)
-        setattr(self, name, system)
+        setattr(self, system.name, system)
 
     def update_subsystems(self, t, dt):
         for subsystem in self.subsystems:
