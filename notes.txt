@@ -1,4 +1,9 @@
 Next:
+* SystemRunner and Recorder
+* PiecewiseFunction and multi-variable plots
+* I guess we'll reverse it: spring.position is the Variable, and for the update
+  method, we'll either pass an object which provides setattr/getattr access to
+  the values, or resort to a symbol name hack of some kind (if at all possible)
 * Note: there can be assignment to reference variables: manually setting
   pendulum.spring.displacement.
 * Arithmetic with variables would be useful

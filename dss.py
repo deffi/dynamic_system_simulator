@@ -11,14 +11,14 @@ from systems import Pendulum, TimeFunction
 # x = np.zeros(np.size(t))
 
 step = lambda t: 1 if t>0 else 0
+rect = lambda t: 1 if t>0 and t<1 else 0
 
 
 s = System("system")
-pendulum = s.add_subsystem(Pendulum("pendulum", mass=0.5, stiffness=1.5, damping=0.1))
-gravity = s.add_subsystem(TimeFunction("gravity", lambda t: -1*step(t-5)))
+pendulum = s.add_subsystem(Pendulum("pendulum", mass=0.5, stiffness=5*1.5, damping=0.1))
+gravity = s.add_subsystem(TimeFunction("gravity", lambda t: -5*rect((t-5)/5)))
 
 pendulum.mass.position = 1
-#pendulum.gravity = -0.5
 pendulum.variables.gravity.connect(gravity.variables.value)
 
 print_system(s)
