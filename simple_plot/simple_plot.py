@@ -106,7 +106,13 @@ class SimplePlot:
             tx = (plot_area._width-1)*(x-x_range.min)/(x_range.max-x_range.min)
             ty = (plot_area._height-1)*(y-y_range.min)/(y_range.max-y_range.min)
             return (tx, ty)
-   
+
+        if x_range.max == x_range.min:
+            x_range = Range(x_range.min - 0.5, x_range.max + 0.5)
+        if y_range.max == y_range.min:
+            y_range = Range(y_range.min - 0.5, y_range.max + 0.5)
+                
+
         plot_area.paint_cross(transform((0, 0)), ignore_outside = True)
         for series in self._series:
             for x, y in zip(series._x, series._y):
