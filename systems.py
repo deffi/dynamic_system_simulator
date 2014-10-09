@@ -1,8 +1,8 @@
 from system import System
  
-class SimpleMass(System):
+class Mass(System):
     def __init__(self, name, mass, position = 0, velocity = 0):
-        super(SimpleMass, self).__init__(name)
+        super(Mass, self).__init__(name)
 
         # Parameters
         self.mass = mass
@@ -18,9 +18,9 @@ class SimpleMass(System):
         self.velocity += self.acceleration * dt
         self.position += self.velocity     * dt
 
-class SimpleSpring(System):
+class Spring(System):
     def __init__(self, name, stiffness = 1):
-        super(SimpleSpring, self).__init__(name)
+        super(Spring, self).__init__(name)
 
         # Parameters
         self.stiffness = stiffness
@@ -32,18 +32,37 @@ class SimpleSpring(System):
     def update(self, t, dt):
         self.force = - self.displacement * self.stiffness
 
-class SimplePendulum(System):
-    def __init__(self, name, mass, stiffness, friction_coefficient):
-        super(SimplePendulum, self).__init__(name)
-
-        self.friction_coefficient = friction_coefficient
-
-        self.add_subsystem(SimpleMass("mass", mass))
-        self.add_subsystem(SimpleSpring("spring", stiffness))
+class Damper(System):
+    def __init__(self, name, damping = 1):
+        super(Damper, self).__init__(name)
         
-        self.spring.variables.displacement.connect(self.mass.variables.position)
-        #self.mass.variables.force.connect(self.spring.variables.force)
-        self.mass.variables.force.connect(lambda: self.spring.force - self.friction_coefficient * self.mass.velocity)
-        # TODO re-enable:
-        #self.friction_coefficient = friction_coefficient
-        # mass.force = spring.force - friction_coefficient * mass.velocity
+        self.damping = damping
+        
+        self.add_input("velocity", 0)
+        self.add_output("force", 0)
+        
+    def update(self, t, dt):
+        self.force = - self.velocity * self.damping
+
+class Pendulum(System):
+    def __init__(self, name, mass, stiffness, damping, gravity):
+        super(Pendulum, self).__init__(name)
+
+        self.gravity = gravity
+
+        mass   = self.add_subsystem(Mass  ("mass"  , mass))
+        spring = self.add_subsystem(Spring("spring", stiffness))
+        damper = self.add_subsystem(Damper("damper", damping))
+        
+        spring.variables.displacement.connect(mass.variables.position)
+        damper.variables.velocity.connect(mass.variables.velocity)
+        # Without damper (direct connection)
+        #mass.variables.force.connect(spring.variables.force)
+        # With damper (callable)
+        mass.variables.force.connect(lambda: spring.force + damper.force + self.gravity)
+        
+        # Good
+        #mass.force.connect(spring.force + damper.force)
+        #mass["force"].connect(spring["force"] + damper["force"])
+        #mass["force"] = spring["force"] + damper["force"]        
+

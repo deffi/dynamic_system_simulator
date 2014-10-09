@@ -25,6 +25,7 @@ class System:
         system.parent = self
         self.subsystems.append(system)
         setattr(self, system.name, system)
+        return system
 
     def update_subsystems(self, t, dt):
         for subsystem in self.subsystems:
