@@ -66,3 +66,13 @@ class Pendulum(System):
         #mass["force"].connect(spring["force"] + damper["force"])
         #mass["force"] = spring["force"] + damper["force"]        
 
+
+class TimeFunction(System):
+    def __init__(self, name, function):
+        super(TimeFunction, self).__init__(name)
+        self._function = function
+        self.add_output("value", function(0))
+        
+    def update(self, t, dt):
+        self.value = self._function(t)
+        
