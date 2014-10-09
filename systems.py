@@ -43,8 +43,8 @@ class SimplePendulum(System):
         self.add_subsystem("mass", SimpleMass(mass))
         self.add_subsystem("spring", SimpleSpring(stiffness))
         
-        self.spring.variables.displacement = self.mass.variables.position
-        self.mass.variables.force = self.spring.variables.force
+        self.spring.variables.displacement.connect(self.mass.variables.position)
+        self.mass.variables.force.connect(self.spring.variables.force)
         
         # TODO re-enable:
         #self.friction_coefficient = friction_coefficient

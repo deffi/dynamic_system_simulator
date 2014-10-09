@@ -11,7 +11,7 @@ class System:
         self.parent = None
 
     def add_variable(self, name, initial_value = None):
-        variable = Variable(name, initial_value)
+        variable = Variable(self, name, initial_value)
         setattr(self.variables, name, variable)
         return variable
 
