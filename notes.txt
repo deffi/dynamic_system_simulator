@@ -1,10 +1,18 @@
+Next:
+* When making multiple connections, or connecting from the outside, do we
+  overwrite previously make connections?
+  Seems so. Solution: only connect inputs to others, and 
+
+
 Goal:
 * Setting pendulum.mass.position or pendulum.spring.displacement must be the
   same thing.
   We don't want a pendulum.position, because we don't want to duplicate every
   single internal value.
+* We'll need a mechanism for enumerating (a) variables and (b) subsystems
   
 Open questions:
+* Do we distinguish between internal values and outputs? Between inputs and outputs?
 * parameters
 * setting initial values from outside (like parameters, or as parameters)
 * subsystems (e. g. vehicle with 4 wheels)

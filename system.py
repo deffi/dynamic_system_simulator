@@ -1,51 +1,59 @@
-class Variable():
-    def __init__(self, name, value = None):
-        self._name = name
-        self._value = value
-        
-    def name(self):
-        return self._name
-        
-    def set(self, value):
-        self._value = value
+from variable import Variable
 
-    def get(self):
-        return self._value
-
-    def __str__(self):
-        return "%s = %s" % (self._name, self._value)
-    
-    def __repr__(self):
-        return "Variable(%s, %s)" % (self._name, self._value)
-
-
+class Container:
+    pass
 
 class System:
     def __init__(self):
-        self._inputs=[]     # List of input names
-        self._outputs=[]    # List of output names
-        self._subsystems=[] # List of subsystem names
+        self.variables = Container()
+        self.subsystems=[]
 
     def add_variable(self, name, initial_value = None):
         variable = Variable(name, initial_value)
-        setattr(self, name, variable)
+        setattr(self.variables, name, variable)
         return variable
 
     def add_input(self, name, initial_value = None):
         self.add_variable(name, initial_value)
-        self._inputs.append(name)
 
     def add_output(self, name, initial_value = None):
         self.add_variable(name, initial_value)
-        self._outputs.append(name)
 
     def add_subsystem(self, name, system):
-        self._subsystems.append(name)
+        self.subsystems.append(name)
         setattr(self, name, system)
 
     def update_subsystems(self, t, dt):
-        for subsystem in self._subsystems:
+        for subsystem in self.subsystems:
             getattr(self, subsystem).update(t, dt)
         
     def update(self, t, dt):
         self.update_subsystems(t, dt)
+
+
+    def __setattr__(self, name, value):
+#         variables = getattr(self, "variables")
+#         if hasattr(variables, name):
+#             variable = getattr(variables, name)
+#             variable.set(value)
+#         else:
+#             super(System, self).__setattr__(name, value)
+
+        # Geht
+        if "variables" in self.__dict__:
+            variables = self.variables
+            if hasattr(variables, name):
+                variable = getattr(variables, name)
+                variable.set(value)
+                return
+  
+        super(System, self).__setattr__(name, value)
+
+    def __getattr__(self, name):
+        variables = self.__dict__["variables"]
+        if hasattr(variables, name):
+            variable = getattr(variables, name)
+            return variable.get()
+        else:
+            return super(System, self).__getattr__(name)
+

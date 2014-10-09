@@ -5,30 +5,22 @@ from systems import SimplePendulum
 
 from simple_plot.simple_plot import plot
 
-# pendulum = Pendulum()
-# 
-# pendulum.spring.stiffness.set(1.5)
-# pendulum.mass.mass.set(0.5)
-# # It should be irrelevant which one we assign to, because it's the same variable
-# pendulum.mass.position.set(1)
-# #pendulum.spring.displacement = 1
-
 # t = np.arange(0, 10, 0.1)
 # x = np.zeros(np.size(t))
 
 pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1)
 
-# Now we can set pendulum.mass.position or pendulum.spring.displacement, at our
-# choice.
-# Next: make it possible to write pendulum.mass.position=1 instead of calling set()
-pendulum.mass.position.set(1)
-#pendulum.spring.displacement.set(1)
+# Or pendulum.spring.displacement
+pendulum.mass.position=1
+
+# print(pendulum.to_string())
+# exit(0)
 
 t = [t*0.1 for t in range(150)]
 x = [0] * len(t)
  
 for i in range(len(t)):
-    x[i] = pendulum.mass.position.get()
+    x[i] = pendulum.mass.position
  
     dt = t[i]-t[i-1] if i>0 else None
     if i>0:

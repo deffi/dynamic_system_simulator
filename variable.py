@@ -1,19 +1,19 @@
-# class Variable:
-#     def __init__(self):
-#         self._reference = None
-#         self._value = None
-#     
-#     def connect(self, reference):
-#         self._reference = reference
-#         
-#     def set(self, value):
-#         if self._reference is None:
-#             self._value = value
-#         else:
-#             self._reference.set(value)
-#         
-#     def get(self):
-#         if self._reference is None:
-#             return self._value
-#         else:
-#             return self._reference.get()
+class Variable():
+    def __init__(self, name, value = None):
+        self._name = name
+        self._value = value
+        
+    def name(self):
+        return self._name
+        
+    def set(self, value):
+        self._value = value
+
+    def get(self):
+        return self._value
+
+    def __str__(self):
+        return "%s = %s" % (self._name, self._value)
+    
+    def __repr__(self):
+        return "Variable(%s, %s)" % (self._name, self._value)
