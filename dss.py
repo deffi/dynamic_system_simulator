@@ -1,6 +1,7 @@
 #import numpy as np
 # from matplotlib import pyplot as plt
 
+from system import print_system
 from systems import SimplePendulum
 
 from simple_plot.simple_plot import plot
@@ -9,12 +10,12 @@ from simple_plot.simple_plot import plot
 # x = np.zeros(np.size(t))
 
 pendulum = SimplePendulum(mass=0.5, stiffness=1.5, friction_coefficient=0.1)
+pendulum.name = "pendulum"
 
 # Or pendulum.spring.displacement
 pendulum.mass.position=1
 
-# print(pendulum.to_string())
-# exit(0)
+print_system(pendulum)
 
 t = [t*0.1 for t in range(150)]
 x = [0] * len(t)
@@ -26,7 +27,7 @@ for i in range(len(t)):
     if i>0:
         pendulum.update(t[i], dt)
 
-plot(t, x, w=120, h=15, background = " ")
+#plot(t, x, w=120, h=15, background = " ")
 
 
 # plt.plot(t, x)        
