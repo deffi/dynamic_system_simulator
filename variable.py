@@ -1,8 +1,9 @@
 class Variable():
-    def __init__(self, system, name, value = None):
+    def __init__(self, system, name, value = None, verbose = False):
         self.system = system
         self.name = name
-        
+        self.verbose = verbose
+         
         self._reference = None
         self._value = value
     
@@ -10,12 +11,14 @@ class Variable():
         self._reference = reference
         
     def set(self, value):
+        if self.verbose:
+            print("%s <- %s" % (self.full_name(), value))
+            
         if self._reference is None:
             self._value = value
         elif callable(self._reference):
             print("Warning: ignoring assignment to a callable Variable")
         else:
-            print("Warning: assignment to a referenced variable")
             self._reference.set(value)
 
     def get(self):

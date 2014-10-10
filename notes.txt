@@ -1,12 +1,13 @@
 Next:
-* SystemRunner and Recorder
-* PiecewiseFunction and multi-variable plots
-* I guess we'll reverse it: spring.position is the Variable, and for the update
-  method, we'll either pass an object which provides setattr/getattr access to
-  the values, or resort to a symbol name hack of some kind (if at all possible)
-* Note: there can be assignment to reference variables: manually setting
-  pendulum.spring.displacement.
-* Arithmetic with variables would be useful
+* Arithmetic with Variables
+* Direct creation of systems: var1.connect(systems.DeadTime(0.5, var2))
+  * Arithmetic is something like that, but with static systems
+* Better passing of the variable_wrapper, the system should do this itself
+* Better handling of time functions
+* Protection against overwriting a Variable instance with the value
+* SystemRunner
+* Recorder
+* PiecewiseFunction
 * Connecting to constant/function input
 * There should be different Variable subclasses instead of large elifs   
 
@@ -19,9 +20,9 @@ Goal:
   
 Open questions:
 * Make sure that all inputs are connected?
-* Do we distinguish between internal values and outputs? Between inputs and outputs?
-* parameters
-* setting initial values from outside (like parameters, or as parameters)
+* Do we distinguish between internal values and outputs? Between inputs and
+  outputs? Parameters and inputs?
+* setting initial values from outside
 * subsystems (e. g. vehicle with 4 wheels)
 * visualization (also internal values: pwm values in a motor controller system,
   integral error in a PID controller)

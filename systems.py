@@ -13,10 +13,10 @@ class Mass(System):
         self.add_output("position", 0)
         self.add_output("acceleration", 0)
         
-    def update(self, t, dt):
-        self.acceleration = self.force / self.mass
-        self.velocity += self.acceleration * dt
-        self.position += self.velocity     * dt
+    def update(self, var, t, dt):
+        var.acceleration = var.force / self.mass
+        var.velocity += var.acceleration * dt
+        var.position += var.velocity     * dt
 
 class Spring(System):
     def __init__(self, name, stiffness = 1):
@@ -29,8 +29,8 @@ class Spring(System):
         # Outputs
         self.add_output("force", 0)
     
-    def update(self, t, dt):
-        self.force = - self.displacement * self.stiffness
+    def update(self, var, t, dt):
+        var.force = - var.displacement * self.stiffness
 
 class Damper(System):
     def __init__(self, name, damping = 1):
@@ -41,8 +41,8 @@ class Damper(System):
         self.add_input("velocity", 0)
         self.add_output("force", 0)
         
-    def update(self, t, dt):
-        self.force = - self.velocity * self.damping
+    def update(self, var, t, dt):
+        var.force = - var.velocity * self.damping
 
 class Pendulum(System):
     def __init__(self, name, mass, stiffness, damping):
@@ -50,16 +50,16 @@ class Pendulum(System):
 
         self.add_input("gravity", 0)
 
-        mass   = self.add_subsystem(Mass  ("mass"  , mass))
+        mass   = self.add_subsystem(Mass  ("mass"  , mass     ))
         spring = self.add_subsystem(Spring("spring", stiffness))
-        damper = self.add_subsystem(Damper("damper", damping))
+        damper = self.add_subsystem(Damper("damper", damping  ))
         
-        spring.variables.displacement.connect(mass.variables.position)
-        damper.variables.velocity.connect(mass.variables.velocity)
-        # Without damper (direct connection)
-        #mass.variables.force.connect(spring.variables.force)
-        # With damper (callable)
-        mass.variables.force.connect(lambda: spring.force + damper.force + self.gravity)
+        spring.displacement.connect(mass.position)
+        damper.velocity.connect(mass.velocity)
+        # Without damper or gravity (direct connection):
+        #mass.force.connect(spring.force)
+        # With damper and gravity (callable):
+        mass.force.connect(lambda: spring.force.get() + damper.force.get() + self.gravity.get())
         
         # Good
         #mass.force.connect(spring.force + damper.force)
@@ -73,6 +73,6 @@ class TimeFunction(System):
         self._function = function
         self.add_output("value", function(0))
         
-    def update(self, t, dt):
-        self.value = self._function(t)
+    def update(self, var, t, dt):
+        var.value = self._function(t)
         

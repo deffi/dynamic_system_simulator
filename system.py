@@ -1,25 +1,45 @@
 from variable import Variable
 
-class Container:
-    pass
+class VariablesWrapper:
+    def __init__(self, system):
+        self._system = system
+    
+    def __setattr__(self, name, value):
+        if name[0] == "_":
+            object.__setattr__(self, name, value)
+        else:
+            system = self._system
+            variable = getattr(system, name)
+            variable.set(value)
+         
+    def __getattr__(self, name):
+        if name[0] == "_":
+            return object.__getattr__(self, name)
+        else:
+            system = self._system
+            variable = getattr(system, name)
+            return variable.get()
+
 
 class System:
     def __init__(self, name):
         self.name = name
-        self.variables = Container()
+        self.variables = []
+        self.variables_wrapper = VariablesWrapper(self)
         self.subsystems=[]
         self.parent = None
 
-    def add_variable(self, name, initial_value = None):
-        variable = Variable(self, name, initial_value)
-        setattr(self.variables, name, variable)
+    def add_variable(self, name, initial_value = None, **kwargs):
+        variable = Variable(self, name, initial_value, **kwargs)
+        self.variables.append(variable)
+        setattr(self, name, variable)
         return variable
 
-    def add_input(self, name, initial_value = None):
-        self.add_variable(name, initial_value)
+    def add_input(self, name, initial_value = None, **kwargs):
+        self.add_variable(name, initial_value, **kwargs)
 
-    def add_output(self, name, initial_value = None):
-        self.add_variable(name, initial_value)
+    def add_output(self, name, initial_value = None, **kwargs):
+        self.add_variable(name, initial_value, **kwargs)
 
     def add_subsystem(self, system):
         system.parent = self
@@ -27,12 +47,12 @@ class System:
         setattr(self, system.name, system)
         return system
 
-    def update_subsystems(self, t, dt):
+    def update_subsystems(self, var, t, dt):
         for subsystem in self.subsystems:
-            subsystem.update(t, dt)
+            subsystem.update(subsystem.variables_wrapper, t, dt)
         
-    def update(self, t, dt):
-        self.update_subsystems(t, dt)
+    def update(self, var, t, dt):
+        self.update_subsystems(var, t, dt)
 
     def full_name(self):
         if self.parent is None:
@@ -40,35 +60,23 @@ class System:
         else:
             return "%s.%s" % (self.parent.full_name(), self.name)
 
-    def __setattr__(self, name, value):
-#         variables = getattr(self, "variables")
-#         if hasattr(variables, name):
-#             variable = getattr(variables, name)
-#             variable.set(value)
-#         else:
-#             super(System, self).__setattr__(name, value)
-
-        # Geht
-        if "variables" in self.__dict__:
-            variables = self.variables
-            if hasattr(variables, name):
-                variable = getattr(variables, name)
-                variable.set(value)
-                return
-  
-        super(System, self).__setattr__(name, value)
-
-    def __getattr__(self, name):
-        variables = self.__dict__["variables"]
-        if hasattr(variables, name):
-            variable = getattr(variables, name)
-            return variable.get()
-        else:
-            return super(System, self).__getattr__(name)
-
 def print_system(system):
     print(system.full_name())
-    for variable in system.variables.__dict__.values():
+    for variable in system.variables:
         print("  - %s" % (variable, ))
     for subsystem in system.subsystems:
         print_system(subsystem)
+
+if __name__ == "__main__":
+    system = System("system")
+    var = system.variables_wrapper
+    system.add_input("inp", 9991)
+    system.add_output("out", 9992)
+    var.inp=1
+    var.out=2
+    var.inp+=0.1
+    var.out+=0.1
+    print(system.inp.get(), var.inp)
+    print(system.out.get(), var.out)
+
+
