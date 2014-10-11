@@ -7,17 +7,23 @@ from system import print_system
 from systems import Pendulum, TimeFunction
 from system_runner import SystemRunner
 
-class MySystem(System):
+
+class PendulumWithGravity(System):
     def __init__(self, name):
-        super(MySystem, self).__init__(name)
+        super(PendulumWithGravity, self).__init__(name)
+
+        gravity_function = fn.PieceWiseFunction()
+        gravity_function.add_segment(5, lambda t: 0)
+        gravity_function.add_segment(5, lambda t: -0.2)
+        gravity_function.add_segment(5, lambda t: 0)
 
         pendulum = self.add_subsystem(Pendulum("pendulum", mass=0.5, stiffness=5*1.5, damping=0.1))
-        gravity = self.add_subsystem(TimeFunction("gravity", lambda t: -0.20*fn.rect((t-5)/5)))
+        gravity = self.add_subsystem(TimeFunction("gravity", gravity_function))
 
         pendulum.mass.position.set(0.1)
         pendulum.gravity.connect(gravity.value)
 
-s = MySystem("system")
+s = PendulumWithGravity("system")
 print_system(s)
 
 runner = SystemRunner(s)

@@ -21,17 +21,12 @@ Next:
 * Protection against overwriting a Variable instance with the value
 * SystemRunner
 * Recorder
-* PiecewiseFunction
 * Connecting to constant/function input
 * There should be different Variable subclasses instead of large elifs
 * For the GUI, we'll need a way to reset the system, or we just have to create a
   a new instance for each run.
 
-
 Cleanup:
-* Variable.Sum should be a Variable, and arithmetic should be possible between
-  all sums. Also, there should be a useful description for sums. 
-* Arithmetic with numeric types
 * v1 + v2 + v3 should return sum([v1,v2,v3]), not sum([v1,sum([v2,v3])])
 * A system can internally connect an output to a function of its input. But
   what happens if we get a cyclic connection?  
