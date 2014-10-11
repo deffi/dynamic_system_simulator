@@ -43,7 +43,7 @@ class AbstractArea:
                 raise ValueError("Point %s is outside the area %s" % (p, (self._width, self._height)))
 
         x, y = p
-        self.do_paint(round(x), round(y), character)
+        self.do_paint(int(round(x)), int(round(y)), character)
 
     def paint_text(self, p, text, ignore_outside = False):
         x, y = p
