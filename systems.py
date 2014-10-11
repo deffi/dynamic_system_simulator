@@ -1,5 +1,6 @@
 from system import System
-
+#from variable import Sum as VariableSum
+ 
 class Mass(System):
     def __init__(self, name, mass, position = 0, velocity = 0):
         super(Mass, self).__init__(name)
@@ -42,10 +43,10 @@ class Damper(System):
         velocity = self.add_input("velocity", 0)
         force    = self.add_output("force", 0)
 
-        force.connect((-damping) * velocity)
+        #force.connect((-damping) * velocity)
         
-    #def update(self, var, t, dt):
-    #    var.force = - var.velocity * self.damping
+    def update(self, var, t, dt):
+        var.force = - var.velocity * self.damping
 
 class Pendulum(System):
     def __init__(self, name, mass, stiffness, damping):

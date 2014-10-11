@@ -1,4 +1,5 @@
 from variable import Variable
+#from variable_new import Variable
 
 class VariablesWrapper:
     def __init__(self, system):
