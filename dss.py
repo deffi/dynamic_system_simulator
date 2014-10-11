@@ -7,22 +7,26 @@ from system import print_system
 from systems import Pendulum, TimeFunction
 from system_runner import SystemRunner
 
-s = System("system")
-pendulum = s.add_subsystem(Pendulum("pendulum", mass=0.5, stiffness=5*1.5, damping=0.1))
-gravity = s.add_subsystem(TimeFunction("gravity", lambda t: -0.20*fn.rect((t-5)/5)))
+class MySystem(System):
+    def __init__(self, name):
+        super(MySystem, self).__init__(name)
 
-pendulum.mass.position.set(0.1)
-pendulum.gravity.connect(gravity.value)
+        pendulum = self.add_subsystem(Pendulum("pendulum", mass=0.5, stiffness=5*1.5, damping=0.1))
+        gravity = self.add_subsystem(TimeFunction("gravity", lambda t: -0.20*fn.rect((t-5)/5)))
 
+        pendulum.mass.position.set(0.1)
+        pendulum.gravity.connect(gravity.value)
+
+s = MySystem("system")
 print_system(s)
 
 runner = SystemRunner(s)
-runner.add_variable(pendulum.mass.position)
-runner.add_variable(gravity.value)
+runner.add_variable(s.pendulum.mass.position)
+runner.add_variable(s.gravity.value)
 runner.run(16, 0.05)
 
-pos = runner.variables[pendulum.mass.position]
-grav = runner.variables[gravity.value]
+pos = runner.variables[s.pendulum.mass.position]
+grav = runner.variables[s.gravity.value]
 t = runner.t
 
 plt.plot(t, pos, t, grav)        

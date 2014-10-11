@@ -23,7 +23,9 @@ Next:
 * Recorder
 * PiecewiseFunction
 * Connecting to constant/function input
-* There should be different Variable subclasses instead of large elifs   
+* There should be different Variable subclasses instead of large elifs
+* For the GUI, we'll need a way to reset the system, or we just have to create a
+  a new instance for each run.
 
 
 Cleanup:
