@@ -1,3 +1,37 @@
+class Sum():
+    def __init__(self, variables):
+        self._variables = variables
+    
+    def set(self, value):
+        raise(Exception("Cannot set a Sum"))
+    
+    def get(self):
+        return sum([variable.get() for variable in self._variables])
+        
+    def reference_names(self):
+        return []
+
+class Product():
+    def __init__(self, factors):
+        self._factors = factors
+
+    def set(self, value):
+        raise(Exception("Cannot set a Product"))
+    
+    def get(self):
+        result = 1
+        for factor in self._factors:
+            if isinstance(factor, Variable):
+                result *= factor.get()
+            else:
+                result *= factor
+        
+        return result
+        
+    def reference_names(self):
+        return []
+
+    
 class Variable():
     def __init__(self, system, name, value = None, verbose = False):
         self.system = system
@@ -44,4 +78,22 @@ class Variable():
         return "%s = %s" % (" -> ".join(self.reference_names()), self.get())
     
     def __repr__(self):
-        return "Variable(%s, %s)" % (self._name, self.get())
+        return "Variable(%s, %s)" % (self.name, self.get())
+
+    def __add__(self, other):
+        if not isinstance(other, (Variable, Sum)):
+            raise TypeError("Can only add variables to other variables")
+        
+        return Sum([self, other])
+
+    def __radd__(self, other):
+        return self+other
+
+    def __mul__(self, other):
+        if not isinstance(other, (float, int)):
+            raise TypeError("Can only add multiply variables with numerics")
+        
+        return Product([self, other])
+            
+    def __rmul__(self, other):
+        return self*other

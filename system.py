@@ -36,10 +36,10 @@ class System:
         return variable
 
     def add_input(self, name, initial_value = None, **kwargs):
-        self.add_variable(name, initial_value, **kwargs)
+        return self.add_variable(name, initial_value, **kwargs)
 
     def add_output(self, name, initial_value = None, **kwargs):
-        self.add_variable(name, initial_value, **kwargs)
+        return self.add_variable(name, initial_value, **kwargs)
 
     def add_subsystem(self, system):
         system.parent = self

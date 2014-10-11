@@ -1,5 +1,5 @@
 Next:
-* Arithmetic with Variables
+* Proper Arithmetic with Variables
 * Direct creation of systems: var1.connect(systems.DeadTime(0.5, var2))
   * Arithmetic is something like that, but with static systems
 * Better passing of the variable_wrapper, the system should do this itself
@@ -11,13 +11,22 @@ Next:
 * Connecting to constant/function input
 * There should be different Variable subclasses instead of large elifs   
 
+
+Cleanup:
+* Variable.Sum should be a Variable, and arithmetic should be possible between
+  all sums. Also, there should be a useful description for sums. 
+* Arithmetic with numeric types
+* v1 + v2 + v3 should return sum([v1,v2,v3]), not sum([v1,sum([v2,v3])])
+* A system can internally connect an output to a function of its input. But
+  what happens if we get a cyclic connection?  
+
 Goal:
 * Setting pendulum.mass.position or pendulum.spring.displacement must be the
   same thing.
   We don't want a pendulum.position, because we don't want to duplicate every
   single internal value.
 * We'll need a mechanism for enumerating (a) variables and (b) subsystems
-  
+
 Open questions:
 * Make sure that all inputs are connected?
 * Do we distinguish between internal values and outputs? Between inputs and

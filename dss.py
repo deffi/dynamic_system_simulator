@@ -1,4 +1,4 @@
-import math
+#import math
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -7,7 +7,7 @@ from system import System
 from system import print_system
 from systems import Pendulum, TimeFunction
 
-#from simple_plot.simple_plot import plot
+#from simple_plot.simple_plot import plot as splot
 
 step = lambda t: 1 if t>0 else 0
 rect = lambda t: 1 if t>0 and t<1 else 0
@@ -42,7 +42,7 @@ for i in range(len(t)):
     if i>0:
         s.update(s.variables_wrapper, t[i], dt)
 
-#plot(t, x, w=120, h=15, background = " ")
+#splot(t, x, w=120, h=15, background = " ")
 
 
 plt.plot(t, x, t, y)        
