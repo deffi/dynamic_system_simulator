@@ -35,8 +35,8 @@ y = np.zeros(np.size(t))
  
 for i in range(len(t)):
     #print(pendulum.spring.displacement.get(), pendulum.spring.force.get())
-    x[i] = pendulum.mass.position.get()
-    y[i] = gravity.value.get()
+    x[i] = float(pendulum.mass.position)
+    y[i] = float(gravity.value)
  
     dt = t[i]-t[i-1] if i>0 else None
     if i>0:

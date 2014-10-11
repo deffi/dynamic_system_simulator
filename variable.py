@@ -21,10 +21,7 @@ class Product():
     def get(self):
         result = 1
         for factor in self._factors:
-            if isinstance(factor, Variable):
-                result *= factor.get()
-            else:
-                result *= factor
+            result *= float(factor)
         
         return result
         
@@ -97,3 +94,6 @@ class Variable():
             
     def __rmul__(self, other):
         return self*other
+    
+    def __float__(self):
+        return float(self.get())
