@@ -25,6 +25,9 @@ Next:
 * There should be different Variable subclasses instead of large elifs
 * For the GUI, we'll need a way to reset the system, or we just have to create a
   a new instance for each run.
+* We must be able to run different systems at different frequencies; e. g. a
+  sample-and-hold system or a discrete-time controller running at 10 Hz, where
+  the physics are still simulated at 100 Hz.
 
 Cleanup:
 * v1 + v2 + v3 should return sum([v1,v2,v3]), not sum([v1,sum([v2,v3])])
