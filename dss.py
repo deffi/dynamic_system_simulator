@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import functions as fn
 from system import System
 from system import print_system
-from systems import Pendulum, TimeFunction
+from systems.systems import Pendulum, TimeFunction
 from system_runner import SystemRunner
 
 
