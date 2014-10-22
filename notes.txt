@@ -1,14 +1,4 @@
 Current:
-* Variable hierarchy:
-  v1+v2+v3 should be sum([v1,v2,v3]), not sum([sum([v1, v2]), v3])
-  This should be done in the __add__ method of the Sum backend, which means that
-  the __add__ method of the Variable has to call __add__ of the backend. 
-  
-* Variable representation:
-  v1 = 1
-  v1_reference -> v1 = 1
-  sum -> (v1 + v2 + v3) = 3
-  sum_reference -> sum -> (v1 + v2 + v3) = 3
   
   
 
@@ -32,8 +22,20 @@ Next:
 Cleanup:
 * v1 + v2 + v3 should return sum([v1,v2,v3]), not sum([v1,sum([v2,v3])])
 * A system can internally connect an output to a function of its input. But
-  what happens if we get a cyclic connection?  
-
+  what happens if we get a cyclic connection?
+  => Simulink calls this an "algebraic loop" and tries to solve it implicitly
+     (if there is a solution). We'll have to detect this and react. It can be
+     solved by inserting a unit delay somewhere.  
+* Variable hierarchy:
+  v1+v2+v3 should be sum([v1,v2,v3]), not sum([sum([v1, v2]), v3])
+  This should be done in the __add__ method of the Sum backend, which means that
+  the __add__ method of the Variable has to call __add__ of the backend. 
+* Variable representation:
+  v1 = 1
+  v1_reference -> v1 = 1
+  sum -> (v1 + v2 + v3) = 3
+  sum_reference -> sum -> (v1 + v2 + v3) = 3
+s
 Goal:
 * Setting pendulum.mass.position or pendulum.spring.displacement must be the
   same thing.
