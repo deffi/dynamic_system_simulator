@@ -1,6 +1,5 @@
 Current:
   
-  
 
 Next:
 * Proper Arithmetic with Variables
@@ -35,7 +34,7 @@ Cleanup:
   v1_reference -> v1 = 1
   sum -> (v1 + v2 + v3) = 3
   sum_reference -> sum -> (v1 + v2 + v3) = 3
-s
+
 Goal:
 * Setting pendulum.mass.position or pendulum.spring.displacement must be the
   same thing.

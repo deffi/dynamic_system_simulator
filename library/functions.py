@@ -1,13 +1,13 @@
 from collections import namedtuple
 
 def step(t):
-    if t > 0:
+    if t >= 0:
         return 1
     else:
         return 0
     
 def rect(t):
-    if t > 0 and t<1:
+    if t >= 0 and t<1:
         return 1
     else:
         return 0
