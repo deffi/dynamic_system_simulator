@@ -1,10 +1,10 @@
 from matplotlib import pyplot as plt
 #from simple_plot.simple_plot import plot as splot
 
-import functions as fn
+import library.functions as fn
 from system import System
 from system import print_system
-from systems import Pendulum, TimeFunction
+from library.systems import Pendulum, TimeFunction
 from system_runner import SystemRunner
 
 
