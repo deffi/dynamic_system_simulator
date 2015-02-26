@@ -1,15 +1,10 @@
 #from matplotlib import pyplot as plt
 from simple_plot.simple_plot import plot as splot
 
-from system3 import System
+from system3 import System, CompositeSystem
+from system_runner_3 import SystemRunner
  
-# import library.functions as fn
-# from system import System
 # from system import print_system
-# from library.systems import Pendulum, TimeFunction
-# from system_runner import SystemRunner
-# 
-#
 
 class Mass(System):
     def __init__(self, name, mass, position = 0, velocity = 0):
@@ -24,10 +19,10 @@ class Mass(System):
         self.add_output("position", 0)
         self.add_output("acceleration", 0)
         
-    def update(self, var, t, dt):
+    def update(self, var, clock):
         var.acceleration = var.force / self.mass
-        var.velocity += var.acceleration * dt
-        var.position += var.velocity     * dt
+        var.velocity += var.acceleration * clock.dt
+        var.position += var.velocity     * clock.dt
 
 class Spring(System):
     def __init__(self, name, stiffness = 1):
@@ -40,29 +35,24 @@ class Spring(System):
         # Outputs
         self.add_output("force", 0)
     
-    def update(self, var, t, dt):
+    def update(self, var, clock):
         var.force = - var.displacement * self.stiffness
 
 class Damper(System):
     def __init__(self, name, damping = 1):
         super(Damper, self).__init__(name)
         
-        # TODO must be a variable so it can be changed
         self.damping = damping
 
-        velocity = self.add_input("velocity", 0)
-        force    = self.add_output("force", 0)
+        self.add_input("velocity", 0)
+        self.add_output("force", 0)
 
-        #force.connect((-damping) * velocity)
-        
-    def update(self, var, t, dt):
+    def update(self, var, clock):
         var.force = - var.velocity * self.damping
 
-class Pendulum(System):
+class Pendulum(CompositeSystem):
     def __init__(self, name, mass, stiffness, damping):
         super(Pendulum, self).__init__(name)
-
-        gravity = self.add_input("gravity", 0)
 
         mass   = self.add_subsystem(Mass  ("mass"  , mass     ))
         spring = self.add_subsystem(Spring("spring", stiffness))
@@ -70,25 +60,21 @@ class Pendulum(System):
         
         spring.displacement.connect(mass.position)
         damper.velocity.connect(mass.velocity)
-        mass.force.connect(spring.force + damper.force + gravity)
+        mass.force.connect(spring.force + damper.force)
 
 
 
-        
-        
-# 
-# s = PendulumWithGravity("system")
+pendulum = Pendulum("pendulum")
 # print_system(s)
 # 
-# runner = SystemRunner(s)
-# runner.add_variable(s.pendulum.mass.position)
-# runner.add_variable(s.gravity.value)
-# runner.run(16, 0.05)
-# 
-# pos = runner.variables[s.pendulum.mass.position]
-# grav = runner.variables[s.gravity.value]
-# t = runner.t
-# 
-# plt.plot(t, pos, t, grav)        
-# #splot(t, x, w=120, h=15, background = " ")
-# plt.show()
+runner = SystemRunner(pendulum)
+runner.add_variable(pendulum.pendulum.mass.position)
+runner.add_variable(pendulum.gravity.value)
+runner.run(16, 0.05)
+ 
+pos = runner.variables[pendulum.mass.position]
+t = runner.t
+ 
+#plt.plot(t, pos, t, grav)        
+splot(t, pos, w=120, h=15, background = " ")
+#plt.show()

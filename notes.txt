@@ -1,5 +1,8 @@
 Current:
-  
+* V3 architecture - cleanup and defancification  
+  * Really distinguish between source and sink variable? System variable, in
+    particular for CompositeSystem, are one from outside and the other from
+    inside
 
 Next:
 * Proper Arithmetic with Variables
@@ -41,6 +44,11 @@ Goal:
   We don't want a pendulum.position, because we don't want to duplicate every
   single internal value.
 * We'll need a mechanism for enumerating (a) variables and (b) subsystems
+* In damper, we want to be able to do this instead of doing the calculation in
+  update(): force.connect((-damping) * velocity)
+* mass.force.connect(spring.force + damper.force + gravity)
+  Then, if we want to be able to change parameter values, they must be a class
+  (potentially Variable)
 
 Open questions:
 * Make sure that all inputs are connected?

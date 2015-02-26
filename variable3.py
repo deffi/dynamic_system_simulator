@@ -5,6 +5,8 @@ class Variable:
     def value(self):
         raise NotImplementedError()
 
+    def set_value(self, value):
+        raise NotImplementedError()
 
 class SourceVariable(Variable):
     def __init__(self, name):
@@ -12,7 +14,10 @@ class SourceVariable(Variable):
         self._value = None
     
     def value(self):
-        self._value = None
+        return self._value
+
+    def set_value(self, value):
+        self._value = value
         
 
 class SinkVariable(Variable):
@@ -27,6 +32,10 @@ class SinkVariable(Variable):
         if self._reference:
             return self._reference.value()
         else:
-            raise NotImplementedError()
-            
-
+            raise ValueError("Sink variable without reference")
+        
+    def set_value(self, value):
+        if self._reference:
+            self._reference.set_value(value)
+        else:
+            raise ValueError("Sink variable without reference")
