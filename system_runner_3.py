@@ -1,5 +1,7 @@
 import numpy as np
 
+from system3 import Clock 
+
 class SystemRunner:
     def __init__(self, system):
         self._system = system
@@ -15,14 +17,17 @@ class SystemRunner:
         
         for var in self.variables.keys():
             self.variables[var] = np.zeros(length)
+
+        clock = Clock()
         
         for i in range(len(t)):
             for var in self.variables.keys():
                 self.variables[var][i] = float(var)
+        
+            clock.update(t[i])
          
-            dt = t[i]-t[i-1] if i>0 else None
             if i>0:
-                self._system.update(self._system.variables_wrapper, t[i], dt)
+                self._system.update(clock)
 
         self.t = t
 

@@ -8,6 +8,9 @@ class Variable:
     def set_value(self, value):
         raise NotImplementedError()
 
+    def __float__(self):
+        return float(self.value())
+    
 class SourceVariable(Variable):
     def __init__(self, name):
         super(SourceVariable, self).__init__(name)
@@ -22,7 +25,7 @@ class SourceVariable(Variable):
 
 class SinkVariable(Variable):
     def __init__(self, name):
-        super(SourceVariable, self).__init__(name)
+        super(SinkVariable, self).__init__(name)
         self._reference = None
         
     def connect(self, reference):
@@ -39,3 +42,14 @@ class SinkVariable(Variable):
             self._reference.set_value(value)
         else:
             raise ValueError("Sink variable without reference")
+
+class ArithmeticVariable(Variable):
+    def __init__(self, name, inputs, function):
+        super(ArithmeticVariable, self).__init__(name)
+        
+        self._inputs = inputs
+        self._function = function
+        
+    def value(self):
+        return self._function(*(input_.value() for input_ in self._inputs))
+        

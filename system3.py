@@ -59,7 +59,7 @@ class VariablesWrapper:
         else:
             system = self._system
             variable = getattr(system, name)
-            variable.set(value)
+            variable.set_value(value)
          
     def __getattr__(self, name):
         if name[0] == "_":
@@ -67,11 +67,12 @@ class VariablesWrapper:
         else:
             system = self._system
             variable = getattr(system, name)
-            return variable.get()
+            return variable.value()
 
 class System:
     def __init__(self, name):
         self.name = name
+        self.variables_wrapper = VariablesWrapper(self)
 
     def update(self, clock):
         raise NotImplementedError()
@@ -80,8 +81,9 @@ class System:
         variable = SinkVariable(name)
         setattr(self, name, variable)
 
-    def add_output(self, name):
+    def add_output(self, name, initial_value):
         variable = SourceVariable(name)
+        variable.set_value(initial_value)
         setattr(self, name, variable)
 
 class CompositeSystem(System):
@@ -92,6 +94,8 @@ class CompositeSystem(System):
 
     def add_subsystem(self, subsystem):
         self._subsystems.append(subsystem)
+        # FIXME nope
+        return subsystem
 
     def update(self, clock):
         for subsystem in self._subsystems:

@@ -3,6 +3,8 @@ Current:
   * Really distinguish between source and sink variable? System variable, in
     particular for CompositeSystem, are one from outside and the other from
     inside
+  * Do we need to handle unconnected sink variables, or do we need a default
+    input value?
 
 Next:
 * Proper Arithmetic with Variables
