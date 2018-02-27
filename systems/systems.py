@@ -71,4 +71,3 @@ class TimeFunction(System):
         
     def update(self, var, t, dt):
         var.value = self._function(t)
-        
